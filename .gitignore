@@ -26,7 +26,6 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-requirements.txt
 setup.py
 ultralytics.egg-info
 
@@ -109,6 +108,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.yoloenv
 .env
 .venv
 .idea
