@@ -1603,6 +1603,7 @@ def parse_model(d, ch, verbose=True):
             C1,
             C2,
             C2f,
+            DilatedC2f,
             C3k2,
             C2fAttn,
             C3,
@@ -1639,36 +1640,19 @@ def parse_model(d, ch, verbose=True):
 
 
 
-################################################
-#EDIT MADE HERE
+####################################################################################################
+# EDIT MADE HERE: Be able to parse a conv block if 4th argument is present as dilation
             # If Conv and 4th argument is present, treat as dilation and set padding=dilation, else use default
             if m.__name__ == "Conv":
                 if len(args) == 4:
                     # args: [out_channels, kernel, stride, dilation]
-                    out_ch, k, s, d = args
-                    args = [c1, out_ch, k, s, d, 1, d]  # p=d, g=1, d=dilation
-                    c2 = out_ch  # ensure c2 is set for channel tracking
+                    dummy_out_ch, k, s, d = args
+                    args = [c1, c2, k, s, d, 1, d]  # p=d, g=1, d=dilation
                 else:
                     args = [c1, c2, *args[1:]]
-
-
-###############################################
-#Put DilatedC2f parser here
-            elif m.__name__ == "DilatedC2f":
-                if len(args) == 3:
-                    # args: [out_channels, shortcut, dr]
-                    out_ch, shortcut, dr = args
-                    args = [c1, out_ch, 1, shortcut, 1, 0.5, dr]
-                    c2 = out_ch
-                else:
-                    args = [c1, c2, *args[1:]]
-
-
-################################################
-
-
-
-
+            else:
+                args = [c1, c2, *args[1:]]
+####################################################################################################
 
 
             if m in repeat_modules:
